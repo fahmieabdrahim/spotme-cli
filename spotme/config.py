@@ -12,8 +12,8 @@ DEFAULTS = {
     "sebab_wfh": "Hari Bekerja Hibrid (HBH)",
     "sebab_lewat": "Tiada", "sebab_jam": "Tiada",
     "catatan_tugasan": "Menyediakan reka bentuk grafik mengikut arahan dan tempoh pelaksanaan yang ditetapkan",
-    "masa_masuk": "07:25", "masa_keluar": "16:35",
-    "auto_pergerakan": True,
+    "masa_masuk": "0", "masa_keluar": "0",
+    "auto_pergerakan": False,
 }
 
 
