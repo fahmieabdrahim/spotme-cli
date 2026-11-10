@@ -185,7 +185,7 @@ class SpotMeAPI:
         if login_text:
             hints = result["login_hints"]
             hints["post_method_seen"] = bool(
-                re.search(r"""(?:method\\s*[:=]\\s*['"]POST|\\.post\\s*\\()""", login_text, re.IGNORECASE)
+                re.search(r"""(?:method\s*[:=]\s*['"]POST|\.post\s*\\()""", login_text, re.IGNORECASE)
             )
             known_fields = (
                 "mykad", "katalaluan", "password", "username",
