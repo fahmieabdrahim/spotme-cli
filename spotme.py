@@ -141,7 +141,7 @@ def main():
    if choice=="0": break
    elif choice=="s": show_config(cfg)
    elif choice=="p": webbrowser.open(PORTAL,new=2)
-   elif choice in FIELDS: edit_field(choice,cfg); cfg=load_config()
+   elif choice in FIELDS: edit_field(choice,cfg); cfg.update(load_config())
    else: print("Pilihan tidak sah.")
  except (KeyboardInterrupt,EOFError): print("\nMenutup SPOT-Me CLI...")
  finally:
