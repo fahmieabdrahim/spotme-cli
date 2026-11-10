@@ -58,6 +58,25 @@ class SpotMeAPI:
         except json.JSONDecodeError as exc:
             raise SpotMeAPIError("API returned invalid JSON.") from exc
 
+    def check_portal_connection(self) -> tuple[bool, int | None]:
+        """Check basic portal reachability without authenticating or changing data."""
+        req = urllib.request.Request(
+            BASE_URL + "/",
+            headers={"Accept": "text/html,application/json", "User-Agent": "spotme-cli/0.2.0"},
+            method="GET",
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=self.timeout) as response:
+                # Do not read or retain portal content; only report transport status.
+                return True, response.status
+        except urllib.error.HTTPError as exc:
+            # An HTTP response proves the host was reached, even if access was denied.
+            return True, exc.code
+        except urllib.error.URLError:
+            return False, None
+        except TimeoutError:
+            return False, None
+
     def login(self, user: str, password: str) -> dict:
         data = self._request(
             "/api/login",
