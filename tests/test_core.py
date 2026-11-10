@@ -45,7 +45,7 @@ class CoreTests(unittest.TestCase):
         html_response.read.return_value = b'<html><script src="/assets/app.js"></script></html>'
         html_response.geturl.return_value = "https://spotme.jdn.gov.my/"
         js_response = MagicMock()
-        js_response.read.return_value = b'const login="/api/v2/login"; const daily="/api/harian";'
+        js_response.read.return_value = b'const login="/api/v2/login"; fetch(login, {method: "POST", body: JSON.stringify({"mykad": user, "katalaluan": pass, "spotme_device_id": device})}); const key="access_token"; const daily="/api/harian";'
         js_response.geturl.return_value = "https://spotme.jdn.gov.my/assets/app.js"
 
         with patch("spotme.api.urllib.request.urlopen") as urlopen:
@@ -61,6 +61,10 @@ class CoreTests(unittest.TestCase):
         self.assertEqual(result["scripts_scanned"], 1)
         self.assertIn("/api/v2/login", result["routes"])
         self.assertIn("/api/harian", result["routes"])
+        self.assertTrue(result["login_hints"]["post_method_seen"])
+        self.assertIn("mykad", result["login_hints"]["request_fields"])
+        self.assertIn("spotme_device_id", result["login_hints"]["request_fields"])
+        self.assertIn("access_token", result["login_hints"]["token_keys"])
 
     def test_portal_inspection_does_not_fetch_off_origin_script(self):
         client = SpotMeAPI()
