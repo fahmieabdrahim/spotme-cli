@@ -16,7 +16,7 @@ HEADER = r"""
 
 
 def clear_screen():
-    print("\033[2J\033[H", end="", flush=True)
+    print("\033[3J\033[2J\033[H", end="", flush=True)
 
 
 def print_header():
