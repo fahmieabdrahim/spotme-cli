@@ -38,6 +38,42 @@ class CoreTests(unittest.TestCase):
         with patch("spotme.api.urllib.request.urlopen", side_effect=urllib.error.URLError("offline")):
             self.assertEqual(client.check_portal_connection(), (False, None))
 
+    def test_portal_inspection_finds_routes_from_same_origin_scripts(self):
+        client = SpotMeAPI()
+        html_response = MagicMock()
+        html_response.status = 200
+        html_response.read.return_value = b'<html><script src="/assets/app.js"></script></html>'
+        html_response.geturl.return_value = "https://spotme.jdn.gov.my/"
+        js_response = MagicMock()
+        js_response.read.return_value = b'const login="/api/v2/login"; const daily="/api/harian";'
+        js_response.geturl.return_value = "https://spotme.jdn.gov.my/assets/app.js"
+
+        with patch("spotme.api.urllib.request.urlopen") as urlopen:
+            urlopen.side_effect = [
+                MagicMock(__enter__=MagicMock(return_value=html_response),
+                          __exit__=MagicMock(return_value=False)),
+                MagicMock(__enter__=MagicMock(return_value=js_response),
+                          __exit__=MagicMock(return_value=False)),
+            ]
+            result = client.inspect_portal()
+
+        self.assertTrue(result["reachable"])
+        self.assertEqual(result["scripts_scanned"], 1)
+        self.assertIn("/api/v2/login", result["routes"])
+        self.assertIn("/api/harian", result["routes"])
+
+    def test_portal_inspection_does_not_fetch_off_origin_script(self):
+        client = SpotMeAPI()
+        html_response = MagicMock()
+        html_response.status = 200
+        html_response.read.return_value = b'<script src="https://evil.example/app.js"></script>'
+        html_response.geturl.return_value = "https://spotme.jdn.gov.my/"
+        with patch("spotme.api.urllib.request.urlopen") as urlopen:
+            urlopen.return_value.__enter__.return_value = html_response
+            result = client.inspect_portal()
+        self.assertEqual(urlopen.call_count, 1)
+        self.assertEqual(result["scripts_scanned"], 0)
+
     def test_daily_movements_rejects_invalid_date_before_request(self):
         client = SpotMeAPI()
         with patch.object(client, "_request") as request:
