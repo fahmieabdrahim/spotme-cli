@@ -6,7 +6,7 @@ from .gps import get_location
 def run_scheduled_event(event: dict, config_getter) -> None:
     """Run the terminal-side event handler and collect live device context."""
     cfg = config_getter()
-    print("\\n" + "=" * 56)
+    print("\n" + "=" * 56)
     print(f"[JADUAL] {event['title']}")
     print(f"Masa peranti: {datetime.now().astimezone().isoformat(timespec='seconds')}")
     print(f"Lokasi tetapan: {cfg.get('lokasi') or '(belum ditetapkan)'}")
