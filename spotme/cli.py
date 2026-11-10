@@ -225,15 +225,15 @@ def main():
         while True:
             clear_screen()
             print_header()
-            print("1. Tetapan Akaun")
-            print("2. Tetapan Maklumat")
-            print("3. Tetapan Masa")
-            print("4. Simpan & Jalankan Sistem")
-            print("5. Keluar")
+            print("1. Account Settings")
+            print("2. Information Settings")
+            print("3. Schedule Settings")
+            print("4. Run System")
+            print("5. Exit")
             if scheduler_running:
-                print("\\nStatus: SISTEM SEDANG BERJALAN")
+                print("\nStatus: SYSTEM RUNNING")
 
-            choice = input("\\nPilihan: ").strip()
+            choice = input("\nSelect an option: ").strip()
             if choice == "1":
                 account_menu()
             elif choice == "2":
@@ -253,18 +253,18 @@ def main():
                         save_config(load_config())
                         scheduler.start()
                         scheduler_running = True
-                        print("\\n[OK] Tetapan disimpan.")
-                        print("[OK] Scheduler SPOT-Me CLI telah dimulakan.")
-                        print("[INFO] Biarkan aplikasi ini terbuka supaya jadual terus berjalan.")
-                        print("[INFO] Tiada rekod dihantar secara automatik; fungsi ini hanya mengesan masa jadual dan memaparkan peringatan/konteks.")
-                input("\\nTekan Enter untuk kembali ke menu...")
+                        print("\n[OK] Settings saved.")
+                        print("[OK] SPOT-Me CLI scheduler started.")
+                        print("[INFO] Keep this application open to keep the schedule running.")
+                        print("[INFO] No records are submitted automatically; this feature only detects scheduled times and displays reminders/context.")
+                input("\nPress Enter to return to the menu...")
             elif choice == "5":
                 break
             else:
                 clear_screen()
                 print_header()
-                print("[RALAT] Pilihan tidak sah. Pilih 1 hingga 5.")
-                input("\\nTekan Enter untuk kembali...")
+                print("[ERROR] Invalid option. Select 1 to 5.")
+                input("\nPress Enter to return...")
     except (KeyboardInterrupt, EOFError):
         pass
     finally:
