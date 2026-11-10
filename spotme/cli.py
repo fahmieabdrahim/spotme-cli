@@ -88,8 +88,8 @@ def account_menu():
         print(f"Password : {'[Telah ditetapkan]' if credentials.get('password') else '[Belum diisi]'}")
         print(f"Lokasi   : {cfg.get('lokasi') or '[Belum diisi]'}")
         print("------------------------------")
-        print("1. Ubah")
-        print("2. Keluar")
+        print("1. Edit")
+        print("2. Exit")
         choice = input("\nPilihan: ").strip()
         if choice == "1":
             edit_account()
@@ -128,8 +128,8 @@ def info_menu():
         for label, key in INFO_FIELDS:
             print(f"{label}: {cfg.get(key) or '[Belum diisi]'}")
         print("------------------------------")
-        print("1. Ubah")
-        print("2. Keluar")
+        print("1. Edit")
+        print("2. Exit")
         choice = input("\nPilihan: ").strip()
         if choice == "1":
             edit_info()
@@ -187,8 +187,8 @@ def time_menu():
         print(f"Masa Daftar Keluar : {cfg.get('masa_keluar') or '0'}")
         print(f"Auto Pergerakan Y/N: {'Y' if cfg.get('auto_pergerakan') else 'N'}")
         print("------------------------------")
-        print("1. Ubah")
-        print("2. Keluar")
+        print("1. Edit")
+        print("2. Exit")
         choice = input("\nPilihan: ").strip()
         if choice == "1":
             edit_time_settings()
