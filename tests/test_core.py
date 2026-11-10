@@ -24,6 +24,20 @@ class CoreTests(unittest.TestCase):
     def test_menu_configuration_has_no_workday_setting(self):
         self.assertNotIn("hari_bekerja", DEFAULTS)
 
+    def test_portal_connection_reports_http_status_without_reading_content(self):
+        client = SpotMeAPI()
+        response = unittest.mock.MagicMock()
+        response.status = 200
+        with patch("spotme.api.urllib.request.urlopen") as urlopen:
+            urlopen.return_value.__enter__.return_value = response
+            self.assertEqual(client.check_portal_connection(), (True, 200))
+            response.read.assert_not_called()
+
+    def test_portal_connection_reports_network_failure(self):
+        client = SpotMeAPI()
+        with patch("spotme.api.urllib.request.urlopen", side_effect=urllib.error.URLError("offline")):
+            self.assertEqual(client.check_portal_connection(), (False, None))
+
     def test_daily_movements_rejects_invalid_date_before_request(self):
         client = SpotMeAPI()
         with patch.object(client, "_request") as request:
