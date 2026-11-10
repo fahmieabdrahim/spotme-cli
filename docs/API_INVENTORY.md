@@ -53,6 +53,10 @@ For each route intended for read-only integration, record:
 
 Store no credentials, OTPs, bearer tokens, cookies, MyKad numbers, coordinates or raw personal records in Git.
 
+## Terminal-only discovery
+
+Run System now inspects the public landing page and up to 15 JavaScript files served from the portal's own host. It reports candidate API route strings and limited login clues (HTTP method, likely request-field names and token-key names) when present in the surrounding frontend code. It does not print source code, submit credentials, call a login route, or treat discovered strings as a verified API contract. This automated scan may miss dynamically loaded or obfuscated code.
+
 ## Current CLI implementation status
 
 The current `spotme/api.py` contains a prototype for `POST /api/login`, `GET /api/checking` and `GET /api/harian`. It is not integrated into the CLI's Run System flow. Its login payload/token parsing is provisional and must not be described as confirmed. The scheduler currently generates local reminders/context only; it does not submit attendance or movement records.
