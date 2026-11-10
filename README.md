@@ -37,7 +37,7 @@ git clone https://github.com/fahmieabdrahim/spotme-cli.git
 cd spotme-cli
 chmod +x install.sh
 ./install.sh
-spotme
+spotme.py
 ```
 
 Jika `spotme` belum dijumpai, tambah `~/.local/bin` ke PATH:
