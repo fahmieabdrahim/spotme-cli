@@ -136,6 +136,7 @@ def main():
             choice = input("\nPilihan: ").strip()
             if choice == "1":
                 account_menu()
+                connect_api()
             elif choice == "2":
                 info_menu()
             elif choice == "3":
