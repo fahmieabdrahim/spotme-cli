@@ -1,1 +1,1 @@
-# Tiada pakej Python luaran diperlukan.
+# Python standard library sahaja; tiada dependency luaran.
