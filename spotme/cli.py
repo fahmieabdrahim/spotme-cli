@@ -275,6 +275,14 @@ def main():
                                     print(f"  - {route}")
                             else:
                                 print("[INFO] No API route candidates detected.")
+                            hints = inspection.get("login_hints", {})
+                            if hints.get("request_fields") or hints.get("token_keys") or hints.get("post_method_seen"):
+                                print("[INFO] Login contract clues found in frontend code:")
+                                print(f"  POST method clue: {'Yes' if hints.get('post_method_seen') else 'Not detected'}")
+                                print(f"  Request field names: {', '.join(hints.get('request_fields', [])) or 'Not detected'}")
+                                print(f"  Token key names: {', '.join(hints.get('token_keys', [])) or 'Not detected'}")
+                            else:
+                                print("[INFO] Login payload/token clues were not detected automatically.")
                             for warning in inspection["warnings"]:
                                 print(f"[WARNING] {warning}")
                             print("[INFO] Route discovery is not proof that an endpoint works or is authorized.")
