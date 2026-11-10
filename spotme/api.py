@@ -16,9 +16,8 @@ class SpotMeAPIError(RuntimeError):
 class SpotMeAPI:
     """Provisional HTTP client for previously observed SPOT-Me routes.
 
-    This client is not wired into Run System. Login payload/token parsing is
-    unverified and must be checked against an authorized, current portal
-    request before relying on it.
+    Only the unauthenticated portal reachability check is used by Run System.
+    Login payload/token parsing remains unverified and is not used there.
     """
 
     def __init__(self, timeout: int = 20):
