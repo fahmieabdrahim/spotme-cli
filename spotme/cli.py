@@ -1,6 +1,7 @@
 from __future__ import annotations
 import getpass
 from .automation import run_scheduled_event
+from .api import SpotMeAPI
 from .config import load_config, save_config, load_credentials, save_password
 from .scheduler import Scheduler, valid_time
 
@@ -251,12 +252,20 @@ def main():
                             print(f"- {item}")
                     else:
                         save_config(load_config())
+                        print("\\n[CHECK] Testing SPOT-Me portal connection...")
+                        reachable, status_code = SpotMeAPI(timeout=10).check_portal_connection()
+                        if reachable:
+                            print(f"[OK] Portal reachable (HTTP {status_code}).")
+                        else:
+                            print("[WARNING] Portal could not be reached. Check internet/VPN or try again.")
+                        print("[INFO] Account login and personal records are not checked yet; the login/API contract is still unverified.")
                         scheduler.start()
                         scheduler_running = True
                         print("\n[OK] Settings saved.")
                         print("[OK] SPOT-Me CLI scheduler started.")
                         print("[INFO] Keep this application open to keep the schedule running.")
-                        print("[INFO] No records are submitted automatically; this feature only detects scheduled times and displays reminders/context.")
+                        print("[INFO] Scheduler monitors configured times and displays reminders/context only.")
+                        print("[INFO] No attendance or movement records are read or submitted in this stage.")
                 input("\nPress Enter to return to the menu...")
             elif choice == "5":
                 break
