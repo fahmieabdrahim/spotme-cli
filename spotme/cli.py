@@ -7,20 +7,18 @@ from .scheduler import Scheduler, valid_time
 
 
 def edit_text(label: str, key: str, cfg: dict):
-    current = cfg.get(key, "")
-    value = input(f"{label} [{current}]: ").strip()
+    value = input(f"{label}: ").strip()
     if value:
         cfg[key] = value
         save_config(cfg)
-        print("Tetapan disimpan.")
+        print(f"[OK] {label} disimpan.")
     else:
-        print("Tiada perubahan. Nilai lama dikekalkan.")
+        print(f"[INFO] {label} tidak diubah.")
 
 
 def account_menu():
     """Minta semua maklumat akaun sekali gus, mengikut turutan."""
     cfg = load_config()
-    credentials = load_credentials()
 
     print("\nTETAPAN AKAUN")
     print("1. User")
@@ -29,12 +27,10 @@ def account_menu():
     print("4. Kembali")
     print("\nIsi maklumat mengikut turutan. Tekan Enter untuk kekalkan nilai sedia ada.")
 
-    # 1. User
     while True:
-        current_user = cfg.get("user", "")
-        value = input(f"1. User / MyKad [{current_user}]: ").strip()
+        value = input("1. User / MyKad: ").strip()
         if not value:
-            print("Tiada perubahan pada User.")
+            print("[INFO] User tidak diubah.")
             break
         if any(ch.isspace() for ch in value):
             print("[RALAT] User tidak boleh mengandungi ruang kosong. Sila masukkan semula.")
@@ -44,25 +40,22 @@ def account_menu():
         print("[OK] User disimpan.")
         break
 
-    # 2. Password
     while True:
-        password = getpass.getpass("2. Password (Enter untuk kekalkan): ")
+        password = getpass.getpass("2. Password: ")
         if not password:
-            print("Tiada perubahan pada Password.")
+            print("[INFO] Password tidak diubah.")
             break
         if password.isspace():
-            print("[RALAT] Password tidak boleh kosong atau mengandungi ruang sahaja.")
+            print("[RALAT] Password tidak boleh mengandungi ruang sahaja.")
             continue
         save_password(password)
         print("[OK] Password disimpan.")
         break
 
-    # 3. Lokasi
     while True:
-        current_location = cfg.get("lokasi", "")
-        location = input(f"3. Lokasi [{current_location}]: ").strip()
+        location = input("3. Lokasi: ").strip()
         if not location:
-            print("Tiada perubahan pada Lokasi.")
+            print("[INFO] Lokasi tidak diubah.")
             break
         if len(location) < 2:
             print("[RALAT] Lokasi terlalu pendek. Masukkan lokasi yang lebih lengkap.")
@@ -72,7 +65,6 @@ def account_menu():
         print("[OK] Lokasi disimpan.")
         break
 
-    print("4. Kembali")
     print("[OK] Tetapan akaun selesai.")
 
 
@@ -84,20 +76,12 @@ def info_menu():
         ("Sebab Tidak Cukup Jam", "sebab_jam"),
         ("Catatan Tugasan", "catatan_tugasan"),
     ]
-    while True:
-        cfg = load_config()
-        print("\nTETAPAN MAKLUMAT")
-        for i, (label, _) in enumerate(fields, 1):
-            print(f"{i}. {label}")
-        print(f"{len(fields)+1}. Kembali")
-        choice = input("\nPilihan: ").strip()
-        if choice == str(len(fields)+1):
-            return
-        if choice.isdigit() and 1 <= int(choice) <= len(fields):
-            label, key = fields[int(choice)-1]
-            edit_text(label, key, cfg)
-        else:
-            print("Pilihan tidak sah.")
+    cfg = load_config()
+    print("\nTETAPAN MAKLUMAT")
+    print("Isi maklumat mengikut turutan. Tekan Enter untuk kekalkan nilai sedia ada.")
+    for label, key in fields:
+        edit_text(label, key, cfg)
+    print("[OK] Tetapan maklumat selesai.")
 
 
 def time_menu():
