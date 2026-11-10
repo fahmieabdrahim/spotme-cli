@@ -181,11 +181,11 @@ class SpotMeAPI:
                         login_contexts.append(source[max(0, found.start() - 1200):found.end() + 1800])
 
         result["routes"] = sorted(routes)[:100]
-        login_text = "\\n".join(login_contexts)
+        login_text = "\n".join(login_contexts)
         if login_text:
             hints = result["login_hints"]
             hints["post_method_seen"] = bool(
-                re.search(r"""(?:method\s*[:=]\s*['"]POST|\.post\s*\\()""", login_text, re.IGNORECASE)
+                re.search(r"""(?:method\s*[:=]\s*['"]POST|\.post\s*\()""", login_text, re.IGNORECASE)
             )
             known_fields = (
                 "mykad", "katalaluan", "password", "username",
