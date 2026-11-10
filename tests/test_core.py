@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 import urllib.error
 
 from spotme.api import SpotMeAPI, SpotMeAPIError
@@ -26,7 +26,7 @@ class CoreTests(unittest.TestCase):
 
     def test_portal_connection_reports_http_status_without_reading_content(self):
         client = SpotMeAPI()
-        response = unittest.mock.MagicMock()
+        response = MagicMock()
         response.status = 200
         with patch("spotme.api.urllib.request.urlopen") as urlopen:
             urlopen.return_value.__enter__.return_value = response
