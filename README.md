@@ -1,49 +1,76 @@
 # SPOT-Me CLI
 
-Aplikasi CLI untuk Kali Linux, WSL dan Android Termux. Aplikasi kekal aktif selagi proses `spotme` berjalan; tetapan dimuatkan semula apabila aplikasi dibuka semula.
+Aplikasi terminal Python untuk Linux/Kali, WSL dan Android Termux. Tiada Chrome, extension atau browser digunakan.
 
-## Aliran fungsi
-- Persediaan hari bekerja sekali sahaja; jadual menggunakan tarikh, hari dan jam sebenar peranti.
-- Simpan ID pengguna, lokasi dan nilai ulasan/sebab/catatan tugasan.
-- Tetapkan masa daftar masuk dan daftar keluar.
-- Pada masa masuk/keluar, portal SPOT-Me dibuka secara automatik.
-- Jika diaktifkan, tindakan pergerakan dijadualkan setiap satu jam bermula satu jam selepas masa masuk dan sehingga masa keluar.
-- Pada masa pergerakan, Android Termux cuba membaca koordinat GPS sebenar melalui Termux:API, kemudian portal dibuka.
-- `0. Exit` atau Ctrl+C menghentikan scheduler. Tiada proses latar ditinggalkan.
-- Tetapan kekal selepas keluar dan digunakan semula apabila `spotme` dibuka lagi.
+## Menu
 
-## Pengesahan rekod rasmi
-Aplikasi menyediakan masa, tetapan dan bacaan GPS untuk semakan serta membuka portal pada masa jadual. Pengguna perlu menyemak dan mengesahkan penghantaran rekod rasmi di portal sendiri. Versi ini tidak menghantar daftar masuk, daftar keluar atau pergerakan secara senyap/automatik, dan tidak mereka masa atau koordinat.
-
-Kata laluan tidak disimpan. Login portal dilakukan oleh pengguna. ID pengguna dan tetapan disimpan setempat dalam `~/.config/spotme-cli/` dengan permission terhad.
-
-## GPS
-- Android: pasang aplikasi Termux:API dan pakej `termux-api`; beri kebenaran lokasi kepada Termux.
-- Kali/WSL: arahan GPS Termux tidak tersedia. Bacaan GPS memerlukan penerima GPS dan integrasi sistem yang sesuai.
-
-## Keperluan
-- Python 3.9 atau lebih baharu.
-- Android: Termux + Termux:API (untuk GPS).
-
-## Jalankan
-```bash
-python3 spotme.py
+```text
+1. Tetapan Akaun
+2. Tetapan Maklumat
+3. Tetapan Masa
+4. Keluar
 ```
 
-Pada persediaan pertama, pilih hari bekerja. Kemudian gunakan medan 1–11 untuk mengubah tetapan. Biarkan CLI terbuka supaya jadual berjalan.
+### Tetapan Akaun
+- User
+- Password
+- Lokasi
 
-## Medan tetapan
-1. Pengguna / ID log masuk
-2. Kata laluan (tidak disimpan)
-3. Lokasi
-4. Ulasan
-5. Sebab bekerja dari rumah
-6. Sebab lewat
-7. Sebab tidak cukup jam
-8. Catatan tugasan
-9. Masa masuk
-10. Masa keluar
-11. Auto pergerakan setiap satu jam
+### Tetapan Maklumat
+- Ulasan
+- Sebab Bekerja Dari Rumah
+- Sebab Lewat
+- Sebab Tidak Cukup Jam
+- Catatan Tugasan
+
+### Tetapan Masa
+- Masa Daftar Masuk
+- Masa Daftar Keluar
+- Auto Pergerakan (1 Jam)
+
+Tetapan disimpan di `~/.config/spotme-cli/`. Password diasingkan daripada konfigurasi dan fail diberi permission 600; direktori diberi permission 700.
+
+## Pasang
+
+```bash
+git clone https://github.com/fahmieabdrahim/spotme-cli.git
+cd spotme-cli
+chmod +x install.sh
+./install.sh
+spotme
+```
+
+Jika `spotme` belum dijumpai, tambah `~/.local/bin` ke PATH:
+
+```bash
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
+```
+
+## Platform
+
+- Linux/Kali/WSL: Python 3.10+.
+- Android Termux: Python 3.10+.
+- GPS Android: pasang aplikasi Termux:API dan pakej `termux-api`, kemudian benarkan akses lokasi.
+- GPS Linux: perlukan GPSD dan penerima GPS yang disokong. WSL lazimnya tiada GPS terbina dalam.
+
+## Ujian API
+
+Apabila User dan Password telah disimpan, aplikasi cuba log masuk ke endpoint API SPOT-Me dan membaca endpoint status `/api/checking`. Respons sebenar dipaparkan di terminal. Jika struktur respons token atau endpoint berubah, mesej ralat dipaparkan.
+
+## Jadual dan status pembangunan
+
+Scheduler menggunakan jam tempatan peranti. Ia mengesan masa daftar masuk/keluar dan sela pergerakan setiap satu jam. Pada masa pergerakan, adapter GPS cuba membaca koordinat semasa peranti; koordinat tidak direka atau digantikan dengan lokasi tetap.
+
+**Peringkat ini ialah asas terminal, konfigurasi, ujian login/status API, GPS dan scheduler.** Aliran tulis rekod kehadiran/pergerakan melalui API belum disambungkan; endpoint dan format transaksi tulis perlu disahkan daripada dokumentasi/API rasmi sebelum fungsi itu boleh dianggap siap. Tiada browser dibuka.
+
+## Data setempat
+
+- `config.json`: maklumat dan jadual.
+- `credentials.json`: password.
+- `state.json`: penanda event yang sudah dicetuskan.
+
+Semua fail berada dalam `~/.config/spotme-cli/`.
 
 ## Lesen
 MIT
