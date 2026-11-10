@@ -40,11 +40,10 @@ chmod +x install.sh
 spotme.py
 ```
 
-Jika `spotme` belum dijumpai, tambah `~/.local/bin` ke PATH:
+Installer akan menambah `~/.local/bin` ke PATH untuk Bash/Zsh. Tutup dan buka terminal semula selepas pemasangan. Selepas itu, setiap kali mahu buka aplikasi, taip sahaja:
 
 ```bash
-echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
-source ~/.bashrc
+spotme.py
 ```
 
 ## Platform
