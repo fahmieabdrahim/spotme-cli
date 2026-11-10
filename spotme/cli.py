@@ -1,14 +1,12 @@
 from __future__ import annotations
 import getpass
-import os
 from .automation import run_scheduled_event
 from .config import load_config, save_config, load_credentials, save_password
 from .scheduler import Scheduler, valid_time
 
 
 def clear_screen():
-    # ANSI clear works in Kali, WSL and modern Termux terminals.
-    print("\\033[2J\\033[H", end="", flush=True)
+    print("\033[2J\033[H", end="", flush=True)
 
 
 def edit_text(label: str, key: str, cfg: dict):
@@ -21,20 +19,13 @@ def edit_text(label: str, key: str, cfg: dict):
         print(f"[INFO] {label} tidak diubah.")
 
 
-def account_menu():
+def edit_account():
     cfg = load_config()
-    credentials = load_credentials()
-    clear_screen()
-    print("TETAPAN AKAUN")
-    print("------------------------------")
-    print(f"User     : {cfg.get('user') or '[Belum diisi]'}")
-    print(f"Password : {'[Telah ditetapkan]' if credentials.get('password') else '[Belum diisi]'}")
-    print(f"Lokasi   : {cfg.get('lokasi') or '[Belum diisi]'}")
-    print("------------------------------")
-    print("Tekan Enter untuk kekalkan nilai sedia ada.\n")
+    print("\nUBAH TETAPAN AKAUN")
+    print("Tekan Enter untuk kekalkan nilai sedia ada.")
 
     while True:
-        value = input("1. User / MyKad: ").strip()
+        value = input("User / MyKad: ").strip()
         if not value:
             print("[INFO] User tidak diubah.")
             break
@@ -47,7 +38,7 @@ def account_menu():
         break
 
     while True:
-        password = getpass.getpass("2. Password: ")
+        password = getpass.getpass("Password: ")
         if not password:
             print("[INFO] Password tidak diubah.")
             break
@@ -59,7 +50,7 @@ def account_menu():
         break
 
     while True:
-        location = input("3. Lokasi: ").strip()
+        location = input("Lokasi: ").strip()
         if not location:
             print("[INFO] Lokasi tidak diubah.")
             break
@@ -70,6 +61,29 @@ def account_menu():
         save_config(cfg)
         print("[OK] Lokasi disimpan.")
         break
+
+
+def account_menu():
+    while True:
+        cfg = load_config()
+        credentials = load_credentials()
+        clear_screen()
+        print("------------------------------")
+        print(f"User     : {cfg.get('user') or '[Belum diisi]'}")
+        print(f"Password : {'[Telah ditetapkan]' if credentials.get('password') else '[Belum diisi]'}")
+        print(f"Lokasi   : {cfg.get('lokasi') or '[Belum diisi]'}")
+        print("------------------------------")
+        print("1. Ubah")
+        print("2. Keluar")
+        choice = input("\nPilihan: ").strip()
+        if choice == "1":
+            edit_account()
+            input("\nTekan Enter untuk kembali...")
+        elif choice == "2":
+            return
+        else:
+            print("[RALAT] Pilihan tidak sah. Pilih 1 atau 2.")
+            input("\nTekan Enter untuk cuba lagi...")
 
 
 def info_menu():
