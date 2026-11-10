@@ -200,9 +200,27 @@ def time_menu():
             input("\nTekan Enter untuk cuba lagi...")
 
 
+def validate_run_settings() -> list[str]:
+    cfg = load_config()
+    credentials = load_credentials()
+    missing = []
+
+    if not cfg.get("user"):
+        missing.append("User / MyKad")
+    if not credentials.get("password"):
+        missing.append("Password")
+    if not cfg.get("lokasi"):
+        missing.append("Lokasi")
+    if not (valid_time(cfg.get("masa_masuk", "")) or valid_time(cfg.get("masa_keluar", ""))):
+        missing.append("Sekurang-kurangnya satu masa jadual (daftar masuk/keluar)")
+
+    return missing
+
+
 def main():
     scheduler = Scheduler(load_config, lambda event: run_scheduled_event(event, load_config))
-    scheduler.start()
+    scheduler_running = False
+
     try:
         while True:
             clear_screen()
@@ -210,8 +228,12 @@ def main():
             print("1. Tetapan Akaun")
             print("2. Tetapan Maklumat")
             print("3. Tetapan Masa")
-            print("4. Keluar")
-            choice = input("\nPilihan: ").strip()
+            print("4. Simpan & Jalankan Sistem")
+            print("5. Keluar")
+            if scheduler_running:
+                print("\\nStatus: SISTEM SEDANG BERJALAN")
+
+            choice = input("\\nPilihan: ").strip()
             if choice == "1":
                 account_menu()
             elif choice == "2":
@@ -219,12 +241,30 @@ def main():
             elif choice == "3":
                 time_menu()
             elif choice == "4":
+                if scheduler_running:
+                    print("\\n[INFO] Sistem sudah pun berjalan.")
+                else:
+                    missing = validate_run_settings()
+                    if missing:
+                        print("\\n[RALAT] Lengkapkan tetapan berikut dahulu:")
+                        for item in missing:
+                            print(f"- {item}")
+                    else:
+                        save_config(load_config())
+                        scheduler.start()
+                        scheduler_running = True
+                        print("\\n[OK] Tetapan disimpan.")
+                        print("[OK] Scheduler SPOT-Me CLI telah dimulakan.")
+                        print("[INFO] Biarkan aplikasi ini terbuka supaya jadual terus berjalan.")
+                        print("[INFO] Tiada rekod dihantar secara automatik; fungsi ini hanya mengesan masa jadual dan memaparkan peringatan/konteks.")
+                input("\\nTekan Enter untuk kembali ke menu...")
+            elif choice == "5":
                 break
             else:
                 clear_screen()
                 print_header()
-                print("[RALAT] Pilihan tidak sah. Pilih 1 hingga 4.")
-                input("\nTekan Enter untuk kembali...")
+                print("[RALAT] Pilihan tidak sah. Pilih 1 hingga 5.")
+                input("\\nTekan Enter untuk kembali...")
     except (KeyboardInterrupt, EOFError):
         pass
     finally:
