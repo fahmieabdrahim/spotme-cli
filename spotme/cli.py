@@ -243,16 +243,16 @@ def main():
                 time_menu()
             elif choice == "4":
                 if scheduler_running:
-                    print("\\n[INFO] Sistem sudah pun berjalan.")
+                    print("\n[INFO] Sistem sudah pun berjalan.")
                 else:
                     missing = validate_run_settings()
                     if missing:
-                        print("\\n[RALAT] Lengkapkan tetapan berikut dahulu:")
+                        print("\n[RALAT] Lengkapkan tetapan berikut dahulu:")
                         for item in missing:
                             print(f"- {item}")
                     else:
                         save_config(load_config())
-                        print("\\n[CHECK] Testing SPOT-Me portal connection...")
+                        print("\n[CHECK] Testing SPOT-Me portal connection...")
                         reachable, status_code = SpotMeAPI(timeout=10).check_portal_connection()
                         if reachable:
                             print(f"[OK] Portal reachable (HTTP {status_code}).")
