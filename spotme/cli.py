@@ -252,13 +252,38 @@ def main():
                             print(f"- {item}")
                     else:
                         save_config(load_config())
-                        print("\n[CHECK] Testing SPOT-Me portal connection...")
-                        reachable, status_code = SpotMeAPI(timeout=10).check_portal_connection()
+                        api = SpotMeAPI(timeout=10)
+                        print("\n[CHECK 1/2] Testing SPOT-Me portal connection...")
+                        reachable, status_code = api.check_portal_connection()
                         if reachable:
                             print(f"[OK] Portal reachable (HTTP {status_code}).")
                         else:
-                            print("[WARNING] Portal could not be reached. Check internet/VPN or try again.")
-                        print("[INFO] Account login and personal records are not checked yet; the login/API contract is still unverified.")
+                            print("[FAIL] Portal could not be reached. Check internet/VPN or try again.")
+
+                        print("\n[CHECK 2/2] Inspecting public portal scripts for API routes...")
+                        inspection = api.inspect_portal()
+                        if inspection["reachable"]:
+                            print(f"[OK] Portal response received (HTTP {inspection['http_status']}).")
+                            print(
+                                f"[INFO] JavaScript files scanned: "
+                                f"{inspection['scripts_scanned']}/{inspection['scripts_found']}."
+                            )
+                            routes = inspection["routes"]
+                            if routes:
+                                print("[INFO] API route candidates found:")
+                                for route in routes:
+                                    print(f"  - {route}")
+                            else:
+                                print("[INFO] No API route candidates detected.")
+                            for warning in inspection["warnings"]:
+                                print(f"[WARNING] {warning}")
+                            print("[INFO] Route discovery is not proof that an endpoint works or is authorized.")
+                        else:
+                            print("[WARNING] Automatic portal inspection could not complete.")
+                            for warning in inspection["warnings"]:
+                                print(f"[INFO] {warning}")
+
+                        print("[INFO] Login is not attempted: request fields, OTP flow and token format are not yet verified.")
                         scheduler.start()
                         scheduler_running = True
                         print("\n[OK] Settings saved.")
