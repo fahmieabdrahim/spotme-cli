@@ -59,11 +59,11 @@ Scheduler menggunakan jam tempatan peranti. Ia mengesan masa daftar masuk/keluar
 
 Scheduler berjalan selagi aplikasi terminal kekal terbuka. Menutup aplikasi akan menghentikan scheduler.
 
-**Run System tidak menghantar atau mengubah rekod rasmi SPOT-Me.** Ia hanya menjalankan scheduler dan memaparkan peringatan/konteks setempat.
+**Run System (peringkat semasa):** menyemak sambungan asas ke portal SPOT-Me tanpa login, kemudian menjalankan scheduler setempat. Ia tidak mengesahkan akaun, membaca rekod peribadi, atau menghantar/mengubah rekod rasmi.
 
 ## API investigation
 
-Status endpoint dan bukti terdahulu direkodkan dalam [docs/API_INVENTORY.md](docs/API_INVENTORY.md). Dokumen itu ialah log penyiasatan, bukan dokumentasi rasmi. Laluan yang hanya ditemui dalam JavaScript ditandakan belum disahkan. Prototype `spotme/api.py` belum disambungkan kepada Run System dan struktur login/token masih provisional.
+Status endpoint dan bukti terdahulu direkodkan dalam [docs/API_INVENTORY.md](docs/API_INVENTORY.md). Dokumen itu ialah log penyiasatan, bukan dokumentasi rasmi. Laluan yang hanya ditemui dalam JavaScript ditandakan belum disahkan. Run System menggunakan hanya ujian sambungan portal tanpa pengesahan akaun. Struktur login/token masih provisional; semakan status akaun dan rekod harian belum diaktifkan sehingga permintaan login yang sah disahkan.
 
 Jangan masukkan kata laluan, MyKad, OTP, token, cookies, koordinat atau rekod peribadi ke dalam Git.
 
