@@ -105,6 +105,7 @@ class SpotMeAPI:
             "scripts_found": 0,
             "scripts_scanned": 0,
             "routes": [],
+            "login_hints": {"post_method_seen": False, "request_fields": [], "token_keys": []},
             "warnings": [],
         }
         request = urllib.request.Request(
@@ -168,13 +169,37 @@ class SpotMeAPI:
             r"""(?<![A-Za-z0-9])((?:/)?api/[A-Za-z0-9_./{}:-]{1,120})"""
         )
         routes = set()
+        login_contexts = []
         for source in sources:
             for match in route_pattern.findall(source):
                 route = "/" + match.lstrip("/")
-                route = route.rstrip(".,;:)]}'\"")
+                route = route.rstrip(".,;:)]}'\\"")
                 if route.startswith("/api/"):
                     routes.add(route)
+                if "login" in route.lower():
+                    for found in re.finditer(re.escape(match), source, flags=re.IGNORECASE):
+                        login_contexts.append(source[max(0, found.start() - 1200):found.end() + 1800])
+
         result["routes"] = sorted(routes)[:100]
+        login_text = "\\n".join(login_contexts)
+        if login_text:
+            hints = result["login_hints"]
+            hints["post_method_seen"] = bool(
+                re.search(r"""(?:method\\s*[:=]\\s*['"]POST|\\.post\\s*\\()""", login_text, re.IGNORECASE)
+            )
+            known_fields = (
+                "mykad", "katalaluan", "password", "username",
+                "user_id", "spotme_device_id", "device_id", "otp",
+            )
+            hints["request_fields"] = [
+                field for field in known_fields
+                if re.search(r"""['"]""" + re.escape(field) + r"""['"]""", login_text, re.IGNORECASE)
+            ]
+            token_pattern = re.compile(
+                r"""['"]([A-Za-z_][A-Za-z0-9_]{1,80}(?:token|auth)[A-Za-z0-9_]*)['"]""",
+                re.IGNORECASE,
+            )
+            hints["token_keys"] = sorted(set(token_pattern.findall(login_text)))[:20]
         if len(script_urls) > MAX_SCRIPTS:
             result["warnings"].append(
                 f"Scan limited to the first {MAX_SCRIPTS} same-origin JavaScript files."
