@@ -199,7 +199,7 @@ def scheduler(cfg, stop, events):
             ):
                 event_id = f"{day_key}:{key}"
                 if valid_time(cfg.get(key, "")) and hhmm == cfg[key] and fired.get(event_id) != "done":
-                    events.put({"id": event_id, "title": title, "kind": kind})
+                    handle_event({"id": event_id, "title": title, "kind": kind}, cfg)
                     fired[event_id] = "done"
                     save_json(STATE, fired)
 
@@ -212,7 +212,7 @@ def scheduler(cfg, stop, events):
                     target = start + timedelta(hours=hour)
                     event_id = f"{day_key}:movement:{hour}"
                     if now >= target and fired.get(event_id) != "done":
-                        events.put({"id": event_id, "title": f"Pergerakan setiap 1 jam (#{hour})", "kind": "movement"})
+                        handle_event({"id": event_id, "title": f"Pergerakan setiap 1 jam (#{hour})", "kind": "movement"}, cfg)
                         fired[event_id] = "done"
                         save_json(STATE, fired)
         stop.wait(1)
