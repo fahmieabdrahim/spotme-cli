@@ -13,30 +13,67 @@ def edit_text(label: str, key: str, cfg: dict):
         cfg[key] = value
         save_config(cfg)
         print("Tetapan disimpan.")
+    else:
+        print("Tiada perubahan. Nilai lama dikekalkan.")
 
 
 def account_menu():
+    """Minta semua maklumat akaun sekali gus, mengikut turutan."""
+    cfg = load_config()
+    credentials = load_credentials()
+
+    print("\nTETAPAN AKAUN")
+    print("1. User")
+    print("2. Password")
+    print("3. Lokasi")
+    print("4. Kembali")
+    print("\nIsi maklumat mengikut turutan. Tekan Enter untuk kekalkan nilai sedia ada.")
+
+    # 1. User
     while True:
-        cfg = load_config()
-        print("\nTETAPAN AKAUN")
-        print("1. User")
-        print("2. Password")
-        print("3. Lokasi")
-        print("4. Kembali")
-        choice = input("\nPilihan: ").strip()
-        if choice == "1":
-            edit_text("User / MyKad", "user", cfg)
-        elif choice == "2":
-            password = getpass.getpass("Password baharu: ")
-            if password:
-                save_password(password)
-                print("Password disimpan dalam fail berasingan dengan permission terhad.")
-        elif choice == "3":
-            edit_text("Lokasi", "lokasi", cfg)
-        elif choice == "4":
-            return
-        else:
-            print("Pilihan tidak sah.")
+        current_user = cfg.get("user", "")
+        value = input(f"1. User / MyKad [{current_user}]: ").strip()
+        if not value:
+            print("Tiada perubahan pada User.")
+            break
+        if any(ch.isspace() for ch in value):
+            print("[RALAT] User tidak boleh mengandungi ruang kosong. Sila masukkan semula.")
+            continue
+        cfg["user"] = value
+        save_config(cfg)
+        print("[OK] User disimpan.")
+        break
+
+    # 2. Password
+    while True:
+        password = getpass.getpass("2. Password (Enter untuk kekalkan): ")
+        if not password:
+            print("Tiada perubahan pada Password.")
+            break
+        if password.isspace():
+            print("[RALAT] Password tidak boleh kosong atau mengandungi ruang sahaja.")
+            continue
+        save_password(password)
+        print("[OK] Password disimpan.")
+        break
+
+    # 3. Lokasi
+    while True:
+        current_location = cfg.get("lokasi", "")
+        location = input(f"3. Lokasi [{current_location}]: ").strip()
+        if not location:
+            print("Tiada perubahan pada Lokasi.")
+            break
+        if len(location) < 2:
+            print("[RALAT] Lokasi terlalu pendek. Masukkan lokasi yang lebih lengkap.")
+            continue
+        cfg["lokasi"] = location
+        save_config(cfg)
+        print("[OK] Lokasi disimpan.")
+        break
+
+    print("4. Kembali")
+    print("[OK] Tetapan akaun selesai.")
 
 
 def info_menu():
@@ -77,17 +114,17 @@ def time_menu():
             if valid_time(value):
                 cfg["masa_masuk"] = value
                 save_config(cfg)
-                print("Masa disimpan.")
+                print("[OK] Masa disimpan.")
             else:
-                print("Format tidak sah. Contoh: 07:25")
+                print("[RALAT] Format masa tidak sah. Gunakan HH:MM, contoh 07:25.")
         elif choice == "2":
             value = input("Masa daftar keluar (HH:MM): ").strip()
             if valid_time(value):
                 cfg["masa_keluar"] = value
                 save_config(cfg)
-                print("Masa disimpan.")
+                print("[OK] Masa disimpan.")
             else:
-                print("Format tidak sah. Contoh: 16:35")
+                print("[RALAT] Format masa tidak sah. Gunakan HH:MM, contoh 16:35.")
         elif choice == "3":
             cfg["auto_pergerakan"] = not cfg["auto_pergerakan"]
             save_config(cfg)
@@ -95,7 +132,7 @@ def time_menu():
         elif choice == "4":
             return
         else:
-            print("Pilihan tidak sah.")
+            print("[RALAT] Pilihan tidak sah. Pilih 1 hingga 4.")
 
 
 def connect_api():
@@ -144,7 +181,7 @@ def main():
             elif choice == "4":
                 break
             else:
-                print("Pilihan tidak sah.")
+                print("[RALAT] Pilihan tidak sah. Pilih 1 hingga 4.")
     except (KeyboardInterrupt, EOFError):
         print("\nMenutup SPOTME CLI...")
     finally:
