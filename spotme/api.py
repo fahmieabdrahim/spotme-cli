@@ -85,7 +85,7 @@ class SpotMeAPI:
         return result
 
     def daily_movements(self, date_iso: str) -> list | dict:
-        if not re.fullmatch(r"\\d{4}-\\d{2}-\\d{2}", date_iso or ""):
+        if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", date_iso or ""):
             raise ValueError("Date must use YYYY-MM-DD format.")
         try:
             date.fromisoformat(date_iso)
