@@ -59,7 +59,7 @@ Scheduler menggunakan jam tempatan peranti. Ia mengesan masa daftar masuk/keluar
 
 Scheduler berjalan selagi aplikasi terminal kekal terbuka. Menutup aplikasi akan menghentikan scheduler.
 
-**Run System (peringkat semasa):** menyemak sambungan asas ke portal SPOT-Me tanpa login, kemudian menjalankan scheduler setempat. Ia tidak mengesahkan akaun, membaca rekod peribadi, atau menghantar/mengubah rekod rasmi.
+**Run System (peringkat semasa):** menguji sambungan portal, kemudian memuat turun landing page dan sehingga 15 fail JavaScript awam daripada domain portal yang sama untuk mengesan calon laluan API. Terminal hanya memaparkan nama laluan yang ditemui; ia tidak menghantar login, tidak menganggap laluan itu sah, dan tidak membaca rekod peribadi. Selepas pemeriksaan, scheduler setempat berjalan dan memaparkan peringatan sahaja. Tiada rekod kehadiran atau pergerakan dihantar atau diubah.
 
 ## API investigation
 
