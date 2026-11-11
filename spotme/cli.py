@@ -292,10 +292,10 @@ def main():
                         if inspection["reachable"]:
                             print(f"Imbasan portal  : SELESAI")
                             print(f"Fail JavaScript : {inspection['scripts_scanned']}/{inspection['scripts_found']}")
-                            print(f"Calon API       : {len(inspection['routes'])} found")
+                            print(f"Calon API       : {len(inspection['routes'])} ditemui")
                             print(f"Kaedah login    : {'POST dikesan' if hints.get('post_method_seen') else 'Belum dikesan'}")
                             print(f"Medan permintaan: {', '.join(hints.get('request_fields', [])) or 'Belum dikesan'}")
-                            print(f"Kunci token     : {', '.join(hints.get('token_keys', [])) or 'Not detected'}")
+                            print(f"Kunci token     : {', '.join(hints.get('token_keys', [])) or 'Belum dikesan'}")
                         else:
                             print("Imbasan portal  : TIDAK BERJAYA")
                         report_path = write_scan_report(inspection)
@@ -307,11 +307,11 @@ def main():
                         print("Sebab           : Proses login dan OTP belum disahkan.")
                         scheduler.start()
                         scheduler_running = True
-                        print("\n[OK] Settings saved.")
-                        print("[OK] SPOT-Me CLI scheduler started.")
-                        print("[INFO] Keep this application open to keep the schedule running.")
-                        print("[INFO] Scheduler monitors configured times and displays reminders/context only.")
-                        print("[INFO] No attendance or movement records are read or submitted in this stage.")
+                        print("\n[OK] Tetapan disimpan.")
+                        print("[OK] Jadual peringatan SPOT-Me bermula.")
+                        print("[INFO] Biarkan aplikasi ini terbuka untuk terus menjalankan jadual.")
+                        print("[INFO] Sistem hanya memantau masa dan memaparkan peringatan.")
+                        print("[INFO] Tiada rekod kehadiran atau pergerakan dibaca atau dihantar.")
                 input("\nTekan Enter untuk kembali ke menu...")
             elif choice == "5":
                 break
@@ -319,7 +319,7 @@ def main():
                 clear_screen()
                 print_header()
                 print("[RALAT] Pilihan tidak sah. Pilih 1 hingga 5.")
-                input("\nPress Enter to return...")
+                input("\nTekan Enter untuk kembali...")
     except (KeyboardInterrupt, EOFError):
         pass
     finally:
