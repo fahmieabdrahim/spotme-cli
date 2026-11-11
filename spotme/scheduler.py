@@ -66,6 +66,28 @@ class Scheduler:
             return "DAFTAR MASUK DISAHKAN"
         return "BELUM DAFTAR MASUK"
 
+    def next_schedule(self, when: datetime | None = None) -> tuple[str, datetime] | None:
+        """Return the next local reminder target; this does not claim portal login."""
+        when = when or datetime.now().astimezone()
+        day = when.date().isoformat()
+        checked_in = self.fired.get("attendance_checkin_date") == day
+        checked_out = self.fired.get("attendance_checkout_date") == day
+        if checked_out:
+            return None
+
+        cfg = self.config_getter()
+        key = "masa_keluar" if checked_in else "masa_masuk"
+        label = "daftar keluar" if checked_in else "daftar masuk"
+        value = cfg.get(key, "")
+        if not valid_time(value):
+            return None
+
+        hour, minute = (int(part) for part in value.split(":"))
+        target = when.replace(hour=hour, minute=minute, second=0, microsecond=0)
+        if target <= when:
+            target += timedelta(days=1)
+        return label, target
+
     def _emit_once(self, event_id: str, event: dict) -> bool:
         """Emit an event once; failed callbacks remain eligible for retry."""
         if self.fired.get(event_id):
