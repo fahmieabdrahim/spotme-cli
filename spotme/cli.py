@@ -364,7 +364,7 @@ def main():
                         upcoming = scheduler.next_schedule()
                         if upcoming:
                             label, target = upcoming
-                            print(f"[INFO] Menunggu jam {target.strftime('%H:%M')} untuk peringatan daftar {label}.")
+                            print(f"[INFO] Menunggu jam {target.strftime('%H:%M')} untuk peringatan {label}.")
                         else:
                             print("[INFO] Tetapkan masa daftar masuk/keluar untuk melihat jadual seterusnya.")
                         print("[INFO] Biarkan aplikasi ini terbuka untuk terus menjalankan jadual.")
