@@ -1,8 +1,9 @@
 from __future__ import annotations
 import getpass
+from pathlib import Path
 from .automation import run_scheduled_event
 from .api import SpotMeAPI
-from .config import load_config, save_config, load_credentials, save_password
+from .config import ROOT, ensure_root, load_config, save_config, load_credentials, save_password
 from .scheduler import Scheduler, valid_time
 
 
@@ -218,6 +219,40 @@ def validate_run_settings() -> list[str]:
     return missing
 
 
+
+def write_scan_report(inspection: dict) -> Path:
+    """Save detailed, non-secret portal scan findings outside the main screen."""
+    ensure_root()
+    report_path = ROOT / "api_scan.txt"
+    hints = inspection.get("login_hints", {})
+    lines = [
+        "SPOT-Me portal scan report",
+        "==========================",
+        f"Reachable: {inspection.get('reachable', False)}",
+        f"HTTP status: {inspection.get('http_status')}",
+        f"JavaScript files: {inspection.get('scripts_scanned', 0)}/{inspection.get('scripts_found', 0)}",
+        "",
+        "API route candidates (not verified endpoints):",
+        *[f"- {route}" for route in inspection.get("routes", [])],
+        "",
+        "Login hints (static frontend clues only):",
+        f"POST method seen: {hints.get('post_method_seen', False)}",
+        f"Request fields: {', '.join(hints.get('request_fields', [])) or 'Not detected'}",
+        f"Token keys: {', '.join(hints.get('token_keys', [])) or 'Not detected'}",
+        "",
+        "Warnings:",
+        *[f"- {warning}" for warning in inspection.get("warnings", [])],
+        "",
+        "No credentials, tokens, cookies, or JavaScript source are stored in this report.",
+    ]
+    report_path.write_text("\\n".join(lines) + "\\n", encoding="utf-8")
+    try:
+        report_path.chmod(0o600)
+    except OSError:
+        pass
+    return report_path
+
+
 def main():
     scheduler = Scheduler(load_config, lambda event: run_scheduled_event(event, load_config))
     scheduler_running = False
@@ -253,45 +288,30 @@ def main():
                     else:
                         save_config(load_config())
                         api = SpotMeAPI(timeout=10)
-                        print("\n[CHECK 1/2] Testing SPOT-Me portal connection...")
+                        print("\nSPOT-ME DIAGNOSTICS")
+                        print("------------------------------")
                         reachable, status_code = api.check_portal_connection()
-                        if reachable:
-                            print(f"[OK] Portal reachable (HTTP {status_code}).")
-                        else:
-                            print("[FAIL] Portal could not be reached. Check internet/VPN or try again.")
+                        print(f"Portal          : {'ONLINE' if reachable else 'OFFLINE'}"
+                              f"{f' (HTTP {status_code})' if status_code is not None else ''}")
 
-                        print("\n[CHECK 2/2] Inspecting public portal scripts for API routes...")
                         inspection = api.inspect_portal()
+                        hints = inspection.get("login_hints", {})
                         if inspection["reachable"]:
-                            print(f"[OK] Portal response received (HTTP {inspection['http_status']}).")
-                            print(
-                                f"[INFO] JavaScript files scanned: "
-                                f"{inspection['scripts_scanned']}/{inspection['scripts_found']}."
-                            )
-                            routes = inspection["routes"]
-                            if routes:
-                                print("[INFO] API route candidates found:")
-                                for route in routes:
-                                    print(f"  - {route}")
-                            else:
-                                print("[INFO] No API route candidates detected.")
-                            hints = inspection.get("login_hints", {})
-                            if hints.get("request_fields") or hints.get("token_keys") or hints.get("post_method_seen"):
-                                print("[INFO] Login contract clues found in frontend code:")
-                                print(f"  POST method clue: {'Yes' if hints.get('post_method_seen') else 'Not detected'}")
-                                print(f"  Request field names: {', '.join(hints.get('request_fields', [])) or 'Not detected'}")
-                                print(f"  Token key names: {', '.join(hints.get('token_keys', [])) or 'Not detected'}")
-                            else:
-                                print("[INFO] Login payload/token clues were not detected automatically.")
-                            for warning in inspection["warnings"]:
-                                print(f"[WARNING] {warning}")
-                            print("[INFO] Route discovery is not proof that an endpoint works or is authorized.")
+                            print(f"Frontend scan   : COMPLETE")
+                            print(f"JavaScript      : {inspection['scripts_scanned']}/{inspection['scripts_found']} files")
+                            print(f"API candidates  : {len(inspection['routes'])} found")
+                            print(f"Login method    : {'POST detected' if hints.get('post_method_seen') else 'Not detected'}")
+                            print(f"Request fields  : {', '.join(hints.get('request_fields', [])) or 'Not detected'}")
+                            print(f"Token keys      : {', '.join(hints.get('token_keys', [])) or 'Not detected'}")
                         else:
-                            print("[WARNING] Automatic portal inspection could not complete.")
-                            for warning in inspection["warnings"]:
-                                print(f"[INFO] {warning}")
-
-                        print("[INFO] Login is not attempted: request fields, OTP flow and token format are not yet verified.")
+                            print("Frontend scan   : UNAVAILABLE")
+                        report_path = write_scan_report(inspection)
+                        print(f"Full report     : {report_path}")
+                        for warning in inspection.get("warnings", []):
+                            print(f"Note            : {warning}")
+                        print("------------------------------")
+                        print("Login           : NOT ATTEMPTED")
+                        print("Reason          : Login and OTP contract is not verified.")
                         scheduler.start()
                         scheduler_running = True
                         print("\n[OK] Settings saved.")
