@@ -2,32 +2,25 @@
 
 Aplikasi terminal Python untuk Linux/Kali, WSL dan Android Termux. Tidak memerlukan Chrome, extension atau browser.
 
-## Main menu
+## Menu utama
 
 ```text
-1. Account Settings
-2. Information Settings
-3. Schedule Settings
-4. Run System
-5. Exit
+1. Tetapan Akaun
+2. Tetapan Maklumat
+3. Tetapan Jadual
+4. Sahkan Daftar Masuk
+5. Sahkan Daftar Keluar
+6. Jalankan Sistem
+7. Keluar
 ```
 
-### Account Settings
-- User / MyKad
-- Password (disimpan berasingan dan tidak dipaparkan)
-- Location
+## Fungsi
 
-### Information Settings
-- Ulasan
-- Sebab Bekerja Dari Rumah
-- Sebab Lewat
-- Sebab Tidak Cukup Jam
-- Catatan Tugasan
-
-### Schedule Settings
-- Masa daftar masuk
-- Masa daftar keluar
-- Auto Pergerakan (peringatan mengikut sela jadual)
+- **Tetapan Akaun:** User / MyKad, password dan lokasi. Password disimpan berasingan dan tidak dipaparkan.
+- **Tetapan Maklumat:** ulasan, sebab bekerja dari rumah, sebab lewat, sebab tidak cukup jam dan catatan tugasan.
+- **Tetapan Jadual:** masa daftar masuk/keluar dan pilihan peringatan Pergerakan Harian.
+- **Pengesahan kehadiran:** pengguna mengesahkan sendiri bahawa daftar masuk/keluar berjaya di portal.
+- **Peringatan Pergerakan Harian:** hanya aktif selepas daftar masuk disahkan; berhenti selepas daftar keluar disahkan atau apabila masa daftar keluar yang ditetapkan tiba.
 
 ## Install
 
@@ -55,27 +48,39 @@ Alias `spotme.py` turut disediakan oleh installer.
 
 ## Scheduler
 
-Scheduler menggunakan jam tempatan peranti. Ia mengesan masa daftar masuk/keluar dan sela pergerakan yang ditetapkan, kemudian memaparkan peringatan serta konteks peranti. Pada peristiwa pergerakan, adapter GPS cuba membaca koordinat semasa peranti; koordinat tidak direka atau digantikan dengan lokasi tetap.
+Scheduler menggunakan jam tempatan peranti dan berjalan selagi aplikasi terminal kekal terbuka. Menutup aplikasi akan menghentikan scheduler. Peringatan daftar masuk/keluar mengikut masa yang ditetapkan. Peringatan pergerakan dikira setiap satu jam selepas masa daftar masuk yang disahkan.
 
-Scheduler berjalan selagi aplikasi terminal kekal terbuka. Menutup aplikasi akan menghentikan scheduler.
+Jika handler peringatan gagal, event tidak ditandakan selesai supaya scheduler boleh mencuba semula pada kitaran seterusnya. State disimpan di dalam `~/.config/spotme-cli/state.json`.
 
-**Run System (peringkat semasa):** menguji sambungan portal, kemudian memuat turun landing page dan sehingga 15 fail JavaScript awam daripada domain portal yang sama. Terminal mengesan calon laluan API serta petunjuk nama medan login/ token jika ditemui. Petunjuk ini bukan kontrak API yang disahkan. CLI belum menghantar login atau membaca rekod peribadi. Selepas pemeriksaan, scheduler setempat berjalan dan memaparkan peringatan sahaja. Tiada rekod kehadiran atau pergerakan dihantar atau diubah.
+**Penting:** aplikasi ini memaparkan peringatan dan konteks peranti sahaja. Ia tidak menghantar atau mengubah rekod kehadiran/pergerakan di portal.
 
-## API investigation
+## Pemeriksaan portal dan status integrasi
 
-Status endpoint dan bukti terdahulu direkodkan dalam [docs/API_INVENTORY.md](docs/API_INVENTORY.md). Dokumen itu ialah log penyiasatan, bukan dokumentasi rasmi. Laluan yang hanya ditemui dalam JavaScript ditandakan belum disahkan. Run System menggunakan hanya ujian sambungan portal tanpa pengesahan akaun. Struktur login/token masih provisional; semakan status akaun dan rekod harian belum diaktifkan sehingga permintaan login yang sah disahkan.
+Run System menguji sambungan portal, kemudian mengimbas landing page dan sehingga 15 fail JavaScript awam daripada domain portal yang sama. Ia melaporkan calon laluan API serta petunjuk medan login/token. Calon daripada imbasan bukan kontrak API yang disahkan.
+
+Login, OTP, pembacaan rekod peribadi dan penyegerakan status kehadiran belum diaktifkan. Rujuk [docs/API_INVENTORY.md](docs/API_INVENTORY.md) untuk tahap bukti setiap laluan. Jangan anggap HTTP 200 atau penemuan nama route sebagai bukti bahawa login atau integrasi telah berjaya.
 
 Jangan masukkan kata laluan, MyKad, OTP, token, cookies, koordinat atau rekod peribadi ke dalam Git.
 
-## Local data
+## Data setempat
 
 Semua fail berada di `~/.config/spotme-cli/`:
 
 - `config.json`: maklumat dan jadual.
 - `credentials.json`: password.
-- `state.json`: penanda event yang sudah dicetuskan.
+- `state.json`: status pengesahan dan event yang sudah dicetuskan.
+- `api_scan.txt`: laporan imbasan portal tanpa credentials/token/cookies.
 
 Password diasingkan daripada konfigurasi. Direktori ditetapkan kepada permission 700 dan fail peribadi kepada permission 600 apabila sistem fail menyokongnya.
+
+## Ujian
+
+Jalankan dari direktori projek:
+
+```bash
+python -m unittest discover -v
+python -m compileall -q spotme tests
+```
 
 ## License
 
