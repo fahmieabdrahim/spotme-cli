@@ -1,5 +1,6 @@
 from __future__ import annotations
 import getpass
+from datetime import datetime
 from pathlib import Path
 from .automation import run_scheduled_event
 from .api import SpotMeAPI
@@ -291,7 +292,20 @@ def main():
             print("7. Keluar")
             print(f"\nStatus Kehadiran: {scheduler.attendance_status()}")
             if scheduler_running:
-                print("Status Sistem   : SYSTEM RUNNING")
+                print("Status Sistem   : SEDANG BERJALAN")
+                print("Status Login    : BELUM DISAHKAN oleh portal")
+                upcoming = scheduler.next_schedule()
+                if upcoming:
+                    label, target = upcoming
+                    remaining = max(0, int((target - datetime.now().astimezone()).total_seconds()))
+                    hours, remainder = divmod(remaining, 3600)
+                    minutes, seconds = divmod(remainder, 60)
+                    print(f"Menunggu        : {target.strftime('%H:%M')} untuk daftar {label}")
+                    print(f"Baki masa       : {hours:02d}:{minutes:02d}:{seconds:02d}")
+                elif scheduler.attendance_status() == "DAFTAR KELUAR DISAHKAN":
+                    print("Jadual hari ini : SELESAI")
+                else:
+                    print("Jadual seterusnya: Belum ditetapkan")
 
             choice = input("\nPilihan: ").strip()
             if choice == "1":
@@ -341,12 +355,18 @@ def main():
                         for warning in inspection.get("warnings", []):
                             print(f"Catatan         : {warning}")
                         print("------------------------------")
-                        print("Login           : BELUM DICUBA")
-                        print("Sebab           : Proses login dan OTP belum disahkan.")
+                        print("Login           : BELUM DISAHKAN")
+                        print("Sebab           : Integrasi login dan OTP portal belum tersedia; tiada login palsu dibuat.")
                         scheduler.start()
                         scheduler_running = True
                         print("\n[OK] Tetapan disimpan.")
                         print("[OK] Jadual peringatan SPOT-Me bermula.")
+                        upcoming = scheduler.next_schedule()
+                        if upcoming:
+                            label, target = upcoming
+                            print(f"[INFO] Menunggu jam {target.strftime('%H:%M')} untuk peringatan daftar {label}.")
+                        else:
+                            print("[INFO] Tetapkan masa daftar masuk/keluar untuk melihat jadual seterusnya.")
                         print("[INFO] Biarkan aplikasi ini terbuka untuk terus menjalankan jadual.")
                         print("[INFO] Pergerakan Harian hanya aktif selepas Daftar Masuk disahkan.")
                         print("[INFO] Pengesahan Daftar Masuk/Keluar dibuat secara manual dalam CLI.")
