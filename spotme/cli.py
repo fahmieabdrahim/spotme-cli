@@ -7,14 +7,7 @@ from .config import ROOT, ensure_root, load_config, save_config, load_credential
 from .scheduler import Scheduler, valid_time
 
 
-HEADER = r"""
-███████╗██████╗  ██████╗ ████████╗   ███╗   ███╗███████╗
-██╔════╝██╔══██╗██╔═══██╗╚══██╔══╝   ████╗ ████║██╔════╝
-███████╗██████╔╝██║   ██║   ██║█████╗██╔████╔██║█████╗
-╚════██║██╔═══╝ ██║   ██║   ██║╚════╝██║╚██╔╝██║██╔══╝
-███████║██║     ╚██████╔╝   ██║      ██║ ╚═╝ ██║███████╗
-╚══════╝╚═╝      ╚═════╝    ╚═╝      ╚═╝     ╚═╝╚══════╝
-"""
+HEADER = "SPOT-Me CLI\\n" + "─" * 30
 
 
 def clear_screen():
@@ -261,11 +254,11 @@ def main():
         while True:
             clear_screen()
             print_header()
-            print("1. Account Settings")
-            print("2. Information Settings")
-            print("3. Schedule Settings")
-            print("4. Run System")
-            print("5. Exit")
+            print("1. Tetapan Akaun")
+            print("2. Tetapan Maklumat")
+            print("3. Tetapan Jadual")
+            print("4. Jalankan Sistem")
+            print("5. Keluar")
             if scheduler_running:
                 print("\nStatus: SYSTEM RUNNING")
 
@@ -325,7 +318,7 @@ def main():
             else:
                 clear_screen()
                 print_header()
-                print("[ERROR] Invalid option. Select 1 to 5.")
+                print("[RALAT] Pilihan tidak sah. Pilih 1 hingga 5.")
                 input("\nPress Enter to return...")
     except (KeyboardInterrupt, EOFError):
         pass
