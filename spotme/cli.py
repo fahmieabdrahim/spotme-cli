@@ -284,8 +284,9 @@ def main():
                         print("\nDIAGNOSTIK SPOT-ME")
                         print("------------------------------")
                         reachable, status_code = api.check_portal_connection()
-                        print(f"Portal          : {'DALAM TALIAN' if reachable else 'TIADA SAMBUNGAN'}"
-                              f"{f' (HTTP {status_code})' if status_code is not None else ''}")
+                        portal_status = "DALAM TALIAN" if reachable else "TIADA SAMBUNGAN"
+                        http_label = f" (HTTP {status_code})" if status_code is not None else ""
+                        print(f"Portal          : {portal_status}{http_label}")
 
                         inspection = api.inspect_portal()
                         hints = inspection.get("login_hints", {})
