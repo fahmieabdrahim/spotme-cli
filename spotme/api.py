@@ -173,7 +173,7 @@ class SpotMeAPI:
         for source in sources:
             for match in route_pattern.findall(source):
                 route = "/" + match.lstrip("/")
-                route = route.rstrip(".,;:)]}'\\"")
+                route = route.rstrip(".,;:)]}'" + chr(34) + chr(92))
                 if route.startswith("/api/"):
                     routes.add(route)
                 if "login" in route.lower():
