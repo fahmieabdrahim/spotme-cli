@@ -6,10 +6,12 @@ from .config import load_state, save_state
 
 
 def valid_time(value: str) -> bool:
+    if not isinstance(value, str) or len(value) != 5 or value[2] != ":":
+        return False
     try:
         datetime.strptime(value, "%H:%M")
         return True
-    except (TypeError, ValueError):
+    except ValueError:
         return False
 
 
