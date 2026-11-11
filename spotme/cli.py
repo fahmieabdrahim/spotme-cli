@@ -7,7 +7,7 @@ from .config import ROOT, ensure_root, load_config, save_config, load_credential
 from .scheduler import Scheduler, valid_time
 
 
-HEADER = "SPOT-Me CLI\\n" + "─" * 30
+HEADER = "SPOT-Me CLI\n" + "─" * 30
 
 
 def clear_screen():
@@ -238,7 +238,7 @@ def write_scan_report(inspection: dict) -> Path:
         "",
         "No credentials, tokens, cookies, or JavaScript source are stored in this report.",
     ]
-    report_path.write_text("\\n".join(lines) + "\\n", encoding="utf-8")
+    report_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
     try:
         report_path.chmod(0o600)
     except OSError:
@@ -262,7 +262,7 @@ def main():
             if scheduler_running:
                 print("\nStatus: SYSTEM RUNNING")
 
-            choice = input("\nSelect an option: ").strip()
+            choice = input("\nPilihan: ").strip()
             if choice == "1":
                 account_menu()
             elif choice == "2":
@@ -281,30 +281,30 @@ def main():
                     else:
                         save_config(load_config())
                         api = SpotMeAPI(timeout=10)
-                        print("\nSPOT-ME DIAGNOSTICS")
+                        print("\nDIAGNOSTIK SPOT-ME")
                         print("------------------------------")
                         reachable, status_code = api.check_portal_connection()
-                        print(f"Portal          : {'ONLINE' if reachable else 'OFFLINE'}"
+                        print(f"Portal          : {'DALAM TALIAN' if reachable else 'TIADA SAMBUNGAN'}"
                               f"{f' (HTTP {status_code})' if status_code is not None else ''}")
 
                         inspection = api.inspect_portal()
                         hints = inspection.get("login_hints", {})
                         if inspection["reachable"]:
-                            print(f"Frontend scan   : COMPLETE")
-                            print(f"JavaScript      : {inspection['scripts_scanned']}/{inspection['scripts_found']} files")
-                            print(f"API candidates  : {len(inspection['routes'])} found")
-                            print(f"Login method    : {'POST detected' if hints.get('post_method_seen') else 'Not detected'}")
-                            print(f"Request fields  : {', '.join(hints.get('request_fields', [])) or 'Not detected'}")
-                            print(f"Token keys      : {', '.join(hints.get('token_keys', [])) or 'Not detected'}")
+                            print(f"Imbasan portal  : SELESAI")
+                            print(f"Fail JavaScript : {inspection['scripts_scanned']}/{inspection['scripts_found']}")
+                            print(f"Calon API       : {len(inspection['routes'])} found")
+                            print(f"Kaedah login    : {'POST dikesan' if hints.get('post_method_seen') else 'Belum dikesan'}")
+                            print(f"Medan permintaan: {', '.join(hints.get('request_fields', [])) or 'Belum dikesan'}")
+                            print(f"Kunci token     : {', '.join(hints.get('token_keys', [])) or 'Not detected'}")
                         else:
-                            print("Frontend scan   : UNAVAILABLE")
+                            print("Imbasan portal  : TIDAK BERJAYA")
                         report_path = write_scan_report(inspection)
-                        print(f"Full report     : {report_path}")
+                        print(f"Laporan penuh   : {report_path}")
                         for warning in inspection.get("warnings", []):
-                            print(f"Note            : {warning}")
+                            print(f"Catatan         : {warning}")
                         print("------------------------------")
-                        print("Login           : NOT ATTEMPTED")
-                        print("Reason          : Login and OTP contract is not verified.")
+                        print("Login           : BELUM DICUBA")
+                        print("Sebab           : Proses login dan OTP belum disahkan.")
                         scheduler.start()
                         scheduler_running = True
                         print("\n[OK] Settings saved.")
@@ -312,7 +312,7 @@ def main():
                         print("[INFO] Keep this application open to keep the schedule running.")
                         print("[INFO] Scheduler monitors configured times and displays reminders/context only.")
                         print("[INFO] No attendance or movement records are read or submitted in this stage.")
-                input("\nPress Enter to return to the menu...")
+                input("\nTekan Enter untuk kembali ke menu...")
             elif choice == "5":
                 break
             else:
