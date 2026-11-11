@@ -70,6 +70,7 @@ class SchedulerTests(unittest.TestCase):
         self.assertTrue(valid_time("07:25"))
         self.assertFalse(valid_time("25:61"))
         self.assertFalse(valid_time("7:25"))
+        self.assertFalse(valid_time("07:5"))
         self.assertFalse(valid_time("0"))
 
 
