@@ -246,6 +246,34 @@ def write_scan_report(inspection: dict) -> Path:
     return report_path
 
 
+def confirm_checkin(scheduler: Scheduler):
+    answer = input(
+        "\\nAdakah daftar masuk di portal SPOT-Me telah berjaya? (Y/N): "
+    ).strip().upper()
+    if answer == "Y":
+        scheduler.confirm_checkin()
+        print("[OK] Daftar masuk disahkan.")
+        print("[OK] Pergerakan Harian kini boleh bermula setiap 1 jam.")
+    elif answer == "N":
+        print("[INFO] Status tidak diubah. Pergerakan Harian kekal tidak aktif.")
+    else:
+        print("[RALAT] Masukkan Y atau N.")
+
+
+def confirm_checkout(scheduler: Scheduler):
+    answer = input(
+        "\\nAdakah daftar keluar di portal SPOT-Me telah berjaya? (Y/N): "
+    ).strip().upper()
+    if answer == "Y":
+        scheduler.confirm_checkout()
+        print("[OK] Daftar keluar disahkan.")
+        print("[OK] Pergerakan Harian dihentikan untuk hari ini.")
+    elif answer == "N":
+        print("[INFO] Status tidak diubah.")
+    else:
+        print("[RALAT] Masukkan Y atau N.")
+
+
 def main():
     scheduler = Scheduler(load_config, lambda event: run_scheduled_event(event, load_config))
     scheduler_running = False
@@ -257,12 +285,15 @@ def main():
             print("1. Tetapan Akaun")
             print("2. Tetapan Maklumat")
             print("3. Tetapan Jadual")
-            print("4. Jalankan Sistem")
-            print("5. Keluar")
+            print("4. Sahkan Daftar Masuk")
+            print("5. Sahkan Daftar Keluar")
+            print("6. Jalankan Sistem")
+            print("7. Keluar")
+            print(f"\\nStatus Kehadiran: {scheduler.attendance_status()}")
             if scheduler_running:
-                print("\nStatus: SYSTEM RUNNING")
+                print("Status Sistem   : SYSTEM RUNNING")
 
-            choice = input("\nPilihan: ").strip()
+            choice = input("\\nPilihan: ").strip()
             if choice == "1":
                 account_menu()
             elif choice == "2":
@@ -270,18 +301,24 @@ def main():
             elif choice == "3":
                 time_menu()
             elif choice == "4":
+                confirm_checkin(scheduler)
+                input("\\nTekan Enter untuk kembali ke menu...")
+            elif choice == "5":
+                confirm_checkout(scheduler)
+                input("\\nTekan Enter untuk kembali ke menu...")
+            elif choice == "6":
                 if scheduler_running:
-                    print("\n[INFO] Sistem sudah pun berjalan.")
+                    print("\\n[INFO] Sistem sudah pun berjalan.")
                 else:
                     missing = validate_run_settings()
                     if missing:
-                        print("\n[RALAT] Lengkapkan tetapan berikut dahulu:")
+                        print("\\n[RALAT] Lengkapkan tetapan berikut dahulu:")
                         for item in missing:
                             print(f"- {item}")
                     else:
                         save_config(load_config())
                         api = SpotMeAPI(timeout=10)
-                        print("\nDIAGNOSTIK SPOT-ME")
+                        print("\\nDIAGNOSTIK SPOT-ME")
                         print("------------------------------")
                         reachable, status_code = api.check_portal_connection()
                         portal_status = "DALAM TALIAN" if reachable else "TIADA SAMBUNGAN"
@@ -291,7 +328,7 @@ def main():
                         inspection = api.inspect_portal()
                         hints = inspection.get("login_hints", {})
                         if inspection["reachable"]:
-                            print(f"Imbasan portal  : SELESAI")
+                            print("Imbasan portal  : SELESAI")
                             print(f"Fail JavaScript : {inspection['scripts_scanned']}/{inspection['scripts_found']}")
                             print(f"Calon API       : {len(inspection['routes'])} ditemui")
                             print(f"Kaedah login    : {'POST dikesan' if hints.get('post_method_seen') else 'Belum dikesan'}")
@@ -308,19 +345,20 @@ def main():
                         print("Sebab           : Proses login dan OTP belum disahkan.")
                         scheduler.start()
                         scheduler_running = True
-                        print("\n[OK] Tetapan disimpan.")
+                        print("\\n[OK] Tetapan disimpan.")
                         print("[OK] Jadual peringatan SPOT-Me bermula.")
                         print("[INFO] Biarkan aplikasi ini terbuka untuk terus menjalankan jadual.")
-                        print("[INFO] Sistem hanya memantau masa dan memaparkan peringatan.")
-                        print("[INFO] Tiada rekod kehadiran atau pergerakan dibaca atau dihantar.")
-                input("\nTekan Enter untuk kembali ke menu...")
-            elif choice == "5":
+                        print("[INFO] Pergerakan Harian hanya aktif selepas Daftar Masuk disahkan.")
+                        print("[INFO] Pengesahan Daftar Masuk/Keluar dibuat secara manual dalam CLI.")
+                        print("[INFO] Sistem tidak menghantar rekod kehadiran atau pergerakan.")
+                input("\\nTekan Enter untuk kembali ke menu...")
+            elif choice == "7":
                 break
             else:
                 clear_screen()
                 print_header()
-                print("[RALAT] Pilihan tidak sah. Pilih 1 hingga 5.")
-                input("\nTekan Enter untuk kembali...")
+                print("[RALAT] Pilihan tidak sah. Pilih 1 hingga 7.")
+                input("\\nTekan Enter untuk kembali...")
     except (KeyboardInterrupt, EOFError):
         pass
     finally:
