@@ -248,7 +248,7 @@ def write_scan_report(inspection: dict) -> Path:
 
 def confirm_checkin(scheduler: Scheduler):
     answer = input(
-        "\\nAdakah daftar masuk di portal SPOT-Me telah berjaya? (Y/N): "
+        "\nAdakah daftar masuk di portal SPOT-Me telah berjaya? (Y/N): "
     ).strip().upper()
     if answer == "Y":
         scheduler.confirm_checkin()
@@ -262,7 +262,7 @@ def confirm_checkin(scheduler: Scheduler):
 
 def confirm_checkout(scheduler: Scheduler):
     answer = input(
-        "\\nAdakah daftar keluar di portal SPOT-Me telah berjaya? (Y/N): "
+        "\nAdakah daftar keluar di portal SPOT-Me telah berjaya? (Y/N): "
     ).strip().upper()
     if answer == "Y":
         scheduler.confirm_checkout()
@@ -289,11 +289,11 @@ def main():
             print("5. Sahkan Daftar Keluar")
             print("6. Jalankan Sistem")
             print("7. Keluar")
-            print(f"\\nStatus Kehadiran: {scheduler.attendance_status()}")
+            print(f"\nStatus Kehadiran: {scheduler.attendance_status()}")
             if scheduler_running:
                 print("Status Sistem   : SYSTEM RUNNING")
 
-            choice = input("\\nPilihan: ").strip()
+            choice = input("\nPilihan: ").strip()
             if choice == "1":
                 account_menu()
             elif choice == "2":
@@ -302,23 +302,23 @@ def main():
                 time_menu()
             elif choice == "4":
                 confirm_checkin(scheduler)
-                input("\\nTekan Enter untuk kembali ke menu...")
+                input("\nTekan Enter untuk kembali ke menu...")
             elif choice == "5":
                 confirm_checkout(scheduler)
-                input("\\nTekan Enter untuk kembali ke menu...")
+                input("\nTekan Enter untuk kembali ke menu...")
             elif choice == "6":
                 if scheduler_running:
-                    print("\\n[INFO] Sistem sudah pun berjalan.")
+                    print("\n[INFO] Sistem sudah pun berjalan.")
                 else:
                     missing = validate_run_settings()
                     if missing:
-                        print("\\n[RALAT] Lengkapkan tetapan berikut dahulu:")
+                        print("\n[RALAT] Lengkapkan tetapan berikut dahulu:")
                         for item in missing:
                             print(f"- {item}")
                     else:
                         save_config(load_config())
                         api = SpotMeAPI(timeout=10)
-                        print("\\nDIAGNOSTIK SPOT-ME")
+                        print("\nDIAGNOSTIK SPOT-ME")
                         print("------------------------------")
                         reachable, status_code = api.check_portal_connection()
                         portal_status = "DALAM TALIAN" if reachable else "TIADA SAMBUNGAN"
@@ -345,20 +345,20 @@ def main():
                         print("Sebab           : Proses login dan OTP belum disahkan.")
                         scheduler.start()
                         scheduler_running = True
-                        print("\\n[OK] Tetapan disimpan.")
+                        print("\n[OK] Tetapan disimpan.")
                         print("[OK] Jadual peringatan SPOT-Me bermula.")
                         print("[INFO] Biarkan aplikasi ini terbuka untuk terus menjalankan jadual.")
                         print("[INFO] Pergerakan Harian hanya aktif selepas Daftar Masuk disahkan.")
                         print("[INFO] Pengesahan Daftar Masuk/Keluar dibuat secara manual dalam CLI.")
                         print("[INFO] Sistem tidak menghantar rekod kehadiran atau pergerakan.")
-                input("\\nTekan Enter untuk kembali ke menu...")
+                input("\nTekan Enter untuk kembali ke menu...")
             elif choice == "7":
                 break
             else:
                 clear_screen()
                 print_header()
                 print("[RALAT] Pilihan tidak sah. Pilih 1 hingga 7.")
-                input("\\nTekan Enter untuk kembali...")
+                input("\nTekan Enter untuk kembali...")
     except (KeyboardInterrupt, EOFError):
         pass
     finally:
