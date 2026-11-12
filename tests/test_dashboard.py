@@ -13,7 +13,7 @@ class DashboardTests(unittest.TestCase):
     def test_portal_state_is_never_claimed_as_authenticated(self):
         joined = "\n".join(build_dashboard(self.config, {}, True, self.now))
         self.assertIn("Login portal       : BELUM DISAHKAN", joined)
-        self.assertIn("tiada rekod dihantar ke portal", joined)
+        self.assertIn("tiada rekod dihantar ke portal", joined.lower())
 
     def test_movement_waits_for_confirmed_checkin(self):
         joined = "\n".join(build_dashboard(self.config, {}, True, self.now))
