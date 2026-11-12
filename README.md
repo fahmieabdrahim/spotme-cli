@@ -2,6 +2,10 @@
 
 Aplikasi terminal Python untuk Linux/Kali, WSL dan Android Termux. Tidak memerlukan Chrome, extension atau browser.
 
+## Pusat Informasi
+
+Paparan utama merangkum status sistem, sambungan portal, pengesahan kehadiran setempat, jadual dan tindakan seterusnya. Status setempat tidak dianggap sebagai bukti transaksi portal.
+
 ## Menu utama
 
 ```text
