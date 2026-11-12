@@ -84,7 +84,7 @@ def build_dashboard(config: dict, state: dict, running: bool,
         f"Pergerakan         : {movement}",
         f"Tindakan seterusnya: {next_action}",
         "Nota               : CLI memantau jadual dan memberi peringatan sahaja.",
-        "                     Login, OTP dan penghantaran rekod portal belum disahkan.",
+        "                     Tiada rekod dihantar ke portal; login dan OTP belum disahkan.",
         "─" * 48,
     ])
     return lines
