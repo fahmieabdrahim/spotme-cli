@@ -6,6 +6,7 @@ from .automation import run_scheduled_event
 from .api import SpotMeAPI
 from .config import ROOT, ensure_root, load_config, save_config, load_credentials, save_password
 from .scheduler import Scheduler, valid_time
+from .dashboard import render_dashboard
 
 
 HEADER = "SPOT-Me CLI\n" + "─" * 30
@@ -283,6 +284,7 @@ def main():
         while True:
             clear_screen()
             print_header()
+            render_dashboard(load_config(), scheduler, scheduler_running)
             print("1. Tetapan Akaun")
             print("2. Tetapan Maklumat")
             print("3. Tetapan Jadual")
@@ -290,23 +292,6 @@ def main():
             print("5. Sahkan Daftar Keluar")
             print("6. Jalankan Sistem")
             print("7. Keluar")
-            print(f"\nStatus Kehadiran: {scheduler.attendance_status()}")
-            if scheduler_running:
-                print("Status Sistem   : SEDANG BERJALAN")
-                print("Status Login    : BELUM DISAHKAN oleh portal")
-                upcoming = scheduler.next_schedule()
-                if upcoming:
-                    label, target = upcoming
-                    remaining = max(0, int((target - datetime.now().astimezone()).total_seconds()))
-                    hours, remainder = divmod(remaining, 3600)
-                    minutes, seconds = divmod(remainder, 60)
-                    print(f"Menunggu        : {target.strftime('%H:%M')} untuk daftar {label}")
-                    print(f"Baki masa       : {hours:02d}:{minutes:02d}:{seconds:02d}")
-                elif scheduler.attendance_status() == "DAFTAR KELUAR DISAHKAN":
-                    print("Jadual hari ini : SELESAI")
-                else:
-                    print("Jadual seterusnya: Belum ditetapkan")
-
             choice = input("\nPilihan: ").strip()
             if choice == "1":
                 account_menu()
